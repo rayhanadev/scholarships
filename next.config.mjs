@@ -6,6 +6,10 @@ const config = {
   compiler: {
     emotion: true,
   },
+  webpack: (config) => {
+    config.externals.push("bun:sqlite");
+    return config;
+  },
 };
 
 export default config;
