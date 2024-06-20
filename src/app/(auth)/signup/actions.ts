@@ -1,25 +1,25 @@
 "use server";
 
+import { hash } from "@node-rs/argon2";
 import { generateIdFromEntropySize } from "lucia";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import type { ActionResult } from "next/dist/server/app-render/types";
-import { hash } from "@node-rs/argon2";
 import { z } from "zod";
 
 import { db } from "lib/db";
 import { users as usersTable } from "lib/db/schema/users";
 import { lucia } from "lib/auth";
 
-const loginSchema = z.object({
+const signupSchema = z.object({
   email: z.string().email("Invalid email address"),
   password: z
     .string()
     .min(8, "Password must be at least 8 characters")
     .max(32, "Password must be at most 32 characters")
     .regex(
-      /^[a-zA-Z\d@$!%*?&]+$/,
-      "Password must contain only letters, numbers, underscores, and hyphens"
+      /^[a-zA-Z\d$!%*?&]+$/,
+      "Password may contain only letters, numbers, and the following special characters: $!%*?&"
     ),
 });
 
@@ -27,7 +27,7 @@ export async function signup(
   _: any,
   formData: FormData
 ): Promise<ActionResult> {
-  const validatedFields = loginSchema.safeParse({
+  const validatedFields = signupSchema.safeParse({
     email: formData.get("email"),
     password: formData.get("password"),
   });
@@ -64,7 +64,8 @@ export async function signup(
   await db.insert(usersTable).values({
     id: userId,
     email: email,
-    username: `${email.split("@")[0].replace(/[^a-zA-Z0-9_-]/g, "")}+${userId}`,
+    username:
+      `${email.split("@")[0].replace(/[^a-zA-Z0-9_-]/g, "")}+${userId}`.toLowerCase(),
     passwordHash: passwordHash,
   });
 
