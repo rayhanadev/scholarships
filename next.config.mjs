@@ -3,12 +3,8 @@ await import("./src/env.mjs");
 /** @type {import("next").NextConfig} */
 const config = {
   reactStrictMode: true,
-  compiler: {
-    emotion: true,
-  },
-  webpack: (config) => {
-    config.externals.push("bun:sqlite");
-    return config;
+  experimental: {
+    serverComponentsExternalPackages: ["@node-rs/argon2"],
   },
 };
 

@@ -6,9 +6,11 @@ import { cache } from "react";
 
 import { env } from "~/env.mjs";
 
-import { db, models } from "./db";
+import { db } from "./db";
+import { sessions as sessionsTable } from "./db/schema/sessions";
+import { users as usersTable } from "./db/schema/users";
 
-const adapter = new DrizzleSQLiteAdapter(db, models.sessions, models.users);
+const adapter = new DrizzleSQLiteAdapter(db, sessionsTable, usersTable);
 
 export const lucia = new Lucia(adapter, {
   sessionCookie: {
@@ -62,6 +64,6 @@ export const validateRequest = cache(
 declare module "lucia" {
   interface Register {
     Lucia: typeof lucia;
-    DatabaseUserAttributes: Omit<typeof models.users.$inferSelect, "id">;
+    DatabaseUserAttributes: Omit<typeof usersTable.$inferSelect, "id">;
   }
 }
