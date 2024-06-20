@@ -31,7 +31,7 @@ export default function LoginForm({
       >
         <div className="flex flex-col items-start justify-start gap-2 w-full">
           <Label htmlFor={emailId}>Email or Username</Label>
-          <Input id={emailId} name="email" type="email" required />
+          <Input id={emailId} name="email" type="text" required />
         </div>
         <div className="flex flex-col items-start justify-start gap-2 w-full">
           <Label htmlFor={passwordId}>Password</Label>
